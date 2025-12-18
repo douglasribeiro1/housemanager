@@ -2,6 +2,7 @@ const CACHE_NAME = 'home-manager-v1';
 const ASSETS = [
   'index.html',
   'manifest.json',
+  'icon.png',
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/vue@3/dist/vue.global.js',
   'https://unpkg.com/dexie@latest/dist/dexie.js',
