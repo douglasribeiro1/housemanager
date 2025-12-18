@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Casa Inteligente</title>
+    <!-- Ícone para navegadores e instalação PWA -->
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
@@ -60,7 +64,6 @@
             
             <!-- 1. DASHBOARD TAB -->
             <section v-if="currentTab === 'home'" class="space-y-6">
-                <!-- Health Score Summary -->
                 <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex items-center gap-4">
                     <div class="relative w-16 h-16 flex items-center justify-center">
                          <svg class="w-full h-full transform -rotate-90">
@@ -76,7 +79,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- High Priority Card -->
                     <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
                         <div class="flex items-center gap-2 mb-4 text-red-500">
                             <i data-lucide="alert-circle" class="w-5 h-5"></i>
@@ -91,7 +93,6 @@
                         <p v-else class="text-gray-400 text-sm italic">Nada pendente.</p>
                     </div>
 
-                    <!-- Upcoming Dates Card -->
                     <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
                         <div class="flex items-center gap-2 mb-4 text-emerald-600">
                             <i data-lucide="calendar" class="w-5 h-5"></i>
@@ -106,7 +107,6 @@
                         <p v-else class="text-gray-400 text-sm italic">Agenda livre.</p>
                     </div>
 
-                    <!-- Shopping Summary Card -->
                     <div class="bg-emerald-600 p-5 rounded-3xl shadow-lg shadow-emerald-100 text-white md:col-span-2 flex justify-between items-center transition active:scale-95 cursor-pointer" @click="currentTab = 'shopping'">
                         <div>
                             <h3 class="font-bold text-lg text-white">Lista de Compras</h3>
@@ -160,7 +160,6 @@
             <!-- 3. TASKS / MAINTENANCE / PROJECTS TAB -->
             <section v-if="['tasks', 'maintenance', 'projects'].includes(currentTab)" class="space-y-4">
                 
-                <!-- House Description Section (Specific for Maintenance) -->
                 <div v-if="currentTab === 'maintenance'" class="bg-emerald-50 p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2 text-emerald-800">
@@ -212,7 +211,6 @@
                         </div>
                     </form>
                     
-                    <!-- Proactive Maintenance Button -->
                     <div v-if="currentTab === 'maintenance'" class="mt-4 pt-4 border-t border-gray-100">
                         <button @click="generateMaintenancePlan" :disabled="loadingAI" class="w-full bg-emerald-50 border border-emerald-100 text-emerald-700 py-3 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm active:scale-95 transition">
                              <span v-if="loadingAI" class="animate-spin">↻</span>
@@ -250,7 +248,7 @@
             </section>
         </main>
 
-        <!-- Edit Modal -->
+        <!-- Modais e Menus -->
         <transition name="fade">
             <div v-if="editingItem" @click.self="editingItem = null" class="fixed inset-0 bg-black/50 z-[80] flex items-center justify-center p-4 backdrop-blur-sm">
                 <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto text-left">
@@ -306,7 +304,6 @@
             </div>
         </transition>
 
-        <!-- Image Preview Modal -->
         <transition name="fade">
             <div v-if="previewImage" @click="previewImage = null" class="fixed inset-0 bg-black/90 z-[90] flex items-center justify-center p-4">
                 <img :src="previewImage" class="max-w-full max-h-full rounded-lg shadow-2xl">
@@ -314,7 +311,6 @@
             </div>
         </transition>
 
-        <!-- Chat Modal -->
         <transition name="fade">
             <div v-if="showChat" @click.self="showChat = false" class="fixed inset-0 bg-black/50 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
                 <div class="bg-white w-full max-w-lg sm:rounded-3xl h-[85vh] flex flex-col shadow-2xl relative">
@@ -345,7 +341,6 @@
             </div>
         </transition>
 
-        <!-- Settings Modal -->
         <transition name="fade">
             <div v-if="showSettings" @click.self="showSettings = false" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
                 <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl relative text-left">
@@ -365,7 +360,7 @@
             </div>
         </transition>
 
-        <!-- Bottom Navigation -->
+        <!-- Barra Inferior -->
         <nav class="bg-white border-t border-gray-100 fixed bottom-0 w-full flex justify-around items-center p-3 z-[60] shadow-up">
             <button v-for="tab in tabs" :key="tab.id" @click="currentTab = tab.id"
                 :class="['flex flex-col items-center gap-1 transition-all flex-1', currentTab === tab.id ? 'text-emerald-600 scale-110 font-bold' : 'text-gray-400']">
@@ -408,7 +403,6 @@
                 const tempApiKey = ref('');
                 const previewImage = ref(null);
 
-                // House Description State
                 const houseDescription = ref('');
                 const tempHouseDescription = ref('');
                 const isEditingHouse = ref(false);
@@ -519,7 +513,7 @@
                     if (shoppingList.value.length < 2) return showToast("Adicione ingredientes à lista primeiro.");
                     loadingAI.value = true;
                     const items = shoppingList.value.filter(i => !i.done).map(i => i.text).join(", ");
-                    const prompt = `Com base nestes ingredientes: [${items}], sugira 2 receitas rápidas. Indique o nome e um resumo de 2 linhas. Responda em Português de Portugal.`;
+                    const prompt = `Com base nestes ingredientes: [${items}], sugira 2 receitas rápidas. Indique o nome e um resumo de 2 linhas. Responda em Português.`;
                     const reply = await callGeminiRaw(prompt);
                     loadingAI.value = false;
                     if (reply) {
@@ -547,7 +541,7 @@
                             });
                         }
                         await loadGeneral();
-                        showToast("Tarefa desdobrada em passos!");
+                        showToast("Tarefa desdobrada!");
                     }
                 };
 
@@ -609,7 +603,7 @@
                             await db.general.add({ title: task.title, type: 'maintenance', priority: task.priority || 'Média', date: task.date || today, done: false });
                         }
                         await loadGeneral();
-                        showToast("Plano de manutenção gerado pela IA!");
+                        showToast("Plano gerado!");
                     }
                 };
 
@@ -659,7 +653,7 @@
                 };
 
                 const copyShoppingList = () => {
-                    let text = "🛒 MINHA LISTA:\n\n";
+                    let text = "🛒 LISTA DE COMPRAS:\n\n";
                     Object.entries(categorizedShopping.value).forEach(([cat, items]) => {
                         text += `--- ${cat.toUpperCase()} ---\n` + items.map(i => `${i.done ? '[X]' : '[ ]'} ${i.text}`).join('\n') + "\n\n";
                     });
